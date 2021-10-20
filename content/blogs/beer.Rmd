@@ -1,0 +1,135 @@
+---
+categories:  
+- ""    #the front matter should be like the one found in, e.g., blog2.md. It cannot be like the normal Rmd we used
+- ""
+date: "2021-09-30"
+description: Beverage consumption  # the title that will show up once someone gets to this page
+draft: false
+image: .jpg # save picture in \static\img\blogs. Acceptable formats= jpg, jpeg, or png . Your iPhone pics wont work
+
+keywords: ""
+slug: beer_consu # slug is the shorthand URL address... no spaces plz
+title: Beverage consumption 
+---
+  
+
+
+
+```{r, setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+```
+
+
+```{r load-libraries, warning=FALSE, message=FALSE, echo=FALSE}
+library(tidyverse)  
+library(mosaic)
+library(ggthemes)
+library(lubridate)
+library(fivethirtyeight)
+library(here)
+library(ggplot2)
+library(dplyr)
+library(skimr)
+library(janitor)
+library(vroom)
+library(tidyquant)
+library(rvest)
+library(ggrepel)
+library(lubridate)
+library(fivethirtyeight)
+```
+
+
+# Where Do People Drink The Most Beer, Wine And Spirits?
+
+```{r, load_alcohol_data}
+data(drinks)
+
+```
+
+What are the variable types? Any missing values we should worry about? 
+
+```{r}
+#Provide some EDA:
+glimpse(drinks)
+
+#Get variable types:
+print(sapply(drinks, class))
+```
+**Variable types range from numeric, integer to character (i.e. string-like).**
+
+```{r glimpse_skim_data}
+#Check for NAs:
+apply(drinks, 2, function(x) any(is.na(x)))
+
+```
+**The dataset contains no missing values.**
+
+Make a plot that shows the top 25 beer consuming countries
+
+```{r beer_plot}
+#get the top 25 beer-consuming countries:
+drinks %>% slice_max(order_by = beer_servings, n = 25) %>%
+#plot, choose descending order for interpretability:
+ggplot(aes(x = fct_reorder(country,desc(beer_servings)), y = beer_servings)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  labs( x = "Country", y = "Average beer servings per year") + 
+  theme(axis.title = element_text(size = 8), axis.text = element_text(size= 5))
+
+```
+
+Make a plot that shows the top 25 wine consuming countries
+
+```{r wine_plot}
+#get the top 25 wine-consuming countries
+drinks %>% slice_max(order_by = wine_servings, n = 25) %>%
+#plot, choose descending order for interpretability
+ggplot(aes(x = fct_reorder(country, desc(wine_servings)), y = wine_servings)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  labs(x = "Country", y = "Average wine servings per year") +
+  theme(axis.title = element_text(size = 8), axis.text = element_text(size= 5))
+
+```
+
+Finally, make a plot that shows the top 25 spirit consuming countries
+```{r spirit_plot}
+#choose the top 25 spirits-consuming countries
+drinks %>% slice_max(order_by = spirit_servings, n = 25) %>%
+#plot, choose descending order for interpretability
+ggplot(aes(x = fct_reorder(country, desc(spirit_servings)), y = spirit_servings)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  labs(x = "Country", y = "Average spirits consumption per year") +
+  theme(axis.title = element_text(size = 8), axis.text = element_text(size= 5))
+
+
+```
+
+What can you infer from these plots? Don't just explain what's in the graph, but speculate or tell a short story (1-2 paragraphs max).
+
+> TYPE YOUR ANSWER AFTER (AND OUTSIDE!) THIS BLOCKQUOTE.
+**Answer:**
+
+We shall begin by stating the top-consuming countries in each category. We will try to identify the causes and detect a pattern based on that.
+
+France, Portugal and Andorra are the top three countries in terms of average wine consumption. This probably happens because wine consumption in these countries is part of the countries' culture and they drink it with their meals. 
+
+Similarly, Namibia, Czech Republic and Gabon are the countries with the highest beer consumption. Grenada, Belarus and Haiti are the top three countries in terms of average spirit consumption and we could infer that people tend to drink a lot in their everyday life. 
+
+Following the same pattern, Grenada and Haiti are among the top producers of traditional spiritis of the Carribean region (specifically, rum), and hence might have a strong tradition of consuming them. In addition, the breakdown of total alcohol consumption might be skewed towards these spirits, since wine is a very expensive product for these low-income countries. Belarus, another top spirit-consuming country, might be a special case. Due to weakness of its national currency, Belarus is well-known as an alcohol purchases hub for all its neighbours. Hence, its calculated per capita domestic spirit consumption could be strongly overestimated in case sales of spirits are used as a proxy to consumption.
+
+Overall, consumption of different alcohol drinks is largely tied to local production capacities (e.g. Italy, Argentina or Greece for wines) and consumption traditions. In addition, income might also be a relevant explanatory variables. Countries with top wine production tend to be economically very prosperous (with a notable exception for Equatorial Guinea), while consumption of spirits is most established in developing countries where population cannot afford expensive alcohol.

@@ -11,10 +11,6 @@ keywords: ""
 slug: my_vacation # slug is the shorthand URL address... no spaces plz
 title: My summer vacation
 ---
-  
-```{r}
-library (knitr)
-```
 
 
 

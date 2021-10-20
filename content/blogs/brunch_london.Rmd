@@ -11,12 +11,8 @@ keywords: ""
 slug: brunch_london # slug is the shorthand URL address... no spaces plz
 title: Being a foodie in London
 ---
-  
-```{r}
-library (knitr)
-```
 
-
+🌺 Beam, Bayswater, London
 
 ```{r, setup, echo=FALSE}
 knitr::opts_chunk$set(
@@ -38,4 +34,11 @@ knitr::opts_chunk$set(
 knitr::include_graphics("/img/violas.jpg",error =FALSE)
 
 ```
+🌸Viola's, Covent Garden, London
 
+
+```{r}
+knitr::include_graphics("/img/elan.jpg",error =FALSE)
+
+```
+🌷EL&N, Knightsbridge, London

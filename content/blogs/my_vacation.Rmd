@@ -12,6 +12,10 @@ slug: my_vacation # slug is the shorthand URL address... no spaces plz
 title: My summer vacation
 ---
   
+```{r}
+library (knitr)
+```
+
 
 
 
@@ -34,8 +38,31 @@ knitr::opts_chunk$set(
 📍Tinos Island, Greece
 
 
+```{r}
+knitr::include_graphics("/img/mykonos.jpg",error =FALSE)
+
+```
+
+📍Mykonos Island, Greece
 
 
+```{r}
+knitr::include_graphics("/img/aegina.jpg",error =FALSE)
 
+```
 
+📍Aegina Island, Greece
 
+```{r}
+knitr::include_graphics("/img/halkidiki.jpg",error =FALSE)
+
+```
+
+📍Nikiti,Halkidiki, Greece
+
+```{r}
+knitr::include_graphics("/img/peloponissos.jpg",error =FALSE)
+
+```
+
+📍Loutraki, Peloponesse, Greece

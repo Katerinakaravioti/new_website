@@ -96,7 +96,7 @@ params:
       - image: brussels.jpg
         subtitle: As seen in the Airbnb platform
         title: Property types in Brusells
-        url: blogs/brussels_assign
+        url: blogs/brussels_as
       - image: climate.jpg
         subtitle: And its effect on weather anomalies
         title: Climate change

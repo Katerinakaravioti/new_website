@@ -53,65 +53,26 @@ library(leaps)
 library(vroom)
 ```
 
+
 ```{r load_data, echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
 
 # use cache=TRUE so you dont donwload the data everytime you knit
 
 listings <- vroom("http://data.insideairbnb.com/belgium/bru/brussels/2021-09-24/data/listings.csv.gz") %>% 
        clean_names()
-
-#the list of columns which we found redundant and excluded from the analysis:
-redundant_columns <- c("id", "listing_url", "scrape_id", "last_scraped", "name", "description", "neighborhood_overview", "picture_url", "host_id", "host_url", "host_name", "host_since", "host_location", "host_about", "host_thumbnail_url", "host_picture_url", "host_verifications", "neighborhood_group_cleansed", "bathrooms", "minimum_minimum_nights", "minimum_maximum_nights", "maximum_maximum_nights", "maximum_minimum_nights", "minimum_nights_avg_ntm", "maximum_nights_avg_ntm", "calendar_updated", "calendar_last_scraped", "license", "host_neighbourhood" , "neighbourhood", "neighbourhood_group_cleansed", "host_response_time", "host_response_rate", "host_acceptance_rate", "host_total_listings_count")
 ```
 
 
-
-
-## Raw values
 ```{r}
-glimpse(listings)
+listings$price <- readr::parse_number(listings$price)
+
 ```
-
-##Summary statistics
-```{r}
-skim(listings)
-```
-
-
-
 
 ```{r}
 typeof(listings$price)
 
 listings %>% group_by(property_type) %>% summarise(counts = count(property_type)) %>% arrange(desc(counts))
 ```
-
-
-
-
-```{r}
-listings <- listings %>%
-  mutate(prop_type_simplified = case_when(
-    property_type %in% c("Entire rental unit","Private room in rental unit", "Entire condominium (condo)","Private room in residential home") ~ property_type, 
-    TRUE ~ "Other"
-  ))
-  
-```
-
-```{r}
-
-listings %>% group_by(minimum_nights) %>% summarize(values = count(minimum_nights)) %>% arrange(desc(values))
-```
-
-
-```{r}
-listings <- listings %>% filter(minimum_nights <= 4)
-
- 
-
-```
-        
-Visualization with a heatmap (i.e. color is differentiated depending on the price of accomodation)
 
 ```{r, out.width = '80%'}
 
@@ -136,5 +97,3 @@ listings$price_cuts <- NULL
 
 #Note - we need to add legend to this :)
 ```
-
-    

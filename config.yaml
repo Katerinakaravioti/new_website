@@ -93,7 +93,7 @@ params:
         subtitle: My favorite places
         title: Brunching in London
         url: blogs/brunch_london
-      - image: brussels.jpg
+      - image: elections.jpg
         subtitle: As seen in the assignment
         title: German Elections
         url: blogs/german_elections

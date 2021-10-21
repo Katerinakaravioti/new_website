@@ -108,6 +108,6 @@ params:
   two:
     buttonText: Get Started
     enable: yes
-    subtitle: This blog contains my Biography and a short description of what I have done in my work experiences. Moreover I have incorporated some pictures of the amazing places in Greee I visited this summer, that anyone should visit. Being a brunch-addit, I also include some recommendations for places in London that will make your day. Finally, I show some  of my group projets in my course of Data Analytics at London Business School, that we made with R programming language
+    subtitle: This blog contains my Biography and a short description of what I have done in my work experiences. Moreover I have incorporated some pictures of the amazing places in Greece I visited this summer, that anyone should visit. Being a brunch-addict, I also include some recommendations for places in London that will make your day. Finally, I show some  of my group projets in my course of Data Analytics at London Business School, that we made with R programming language.
     title: About this blog
     url: blogs

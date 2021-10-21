@@ -94,9 +94,9 @@ params:
         title: Brunching in London
         url: blogs/brunch_london
       - image: brussels.jpg
-        subtitle: As seen in the Airbnb platform
-        title: Property types in Brusells
-        url: blogs/brussels_as
+        subtitle: As seen in the assignment
+        title: German Elections
+        url: blogs/german_elections
       - image: climate.jpg
         subtitle: And its effect on weather anomalies
         title: Climate change

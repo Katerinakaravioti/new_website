@@ -1,0 +1,111 @@
+---
+categories:  
+- ""    #the front matter should be like the one found in, e.g., blog2.md. It cannot be like the normal Rmd we used
+- ""
+date: "2021-09-30"
+description: Movies  # the title that will show up once someone gets to this page
+draft: false
+image: .jpg # save picture in \static\img\blogs. Acceptable formats= jpg, jpeg, or png . Your iPhone pics wont work
+
+keywords: ""
+slug: movies_imdb # slug is the shorthand URL address... no spaces plz
+title: Movies IMDB
+---
+
+```{r, setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+```
+
+
+#Challenge 2
+
+```{r, scrape_wikipedia_polling_data, warnings= FALSE, message=FALSE}
+url <- "https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election"
+
+# similar graphs and analyses can be found at 
+# https://www.theguardian.com/world/2021/jun/21/german-election-poll-tracker-who-will-be-the-next-chancellor
+# https://www.economist.com/graphic-detail/who-will-succeed-angela-merkel
+
+
+# get tables that exist on wikipedia page 
+tables <- url %>% 
+  read_html() %>% 
+  html_nodes(css="table")
+
+
+# parse HTML tables into a dataframe called polls 
+# Use purr::map() to create a list of all tables in URL
+polls <- map(tables, . %>% 
+             html_table(fill=TRUE)%>% 
+             janitor::clean_names())
+
+
+# list of opinion polls
+german_election_polls <- polls[[1]] %>% # the first table on the page contains the list of all opinions polls
+  slice(2:(n()-1)) %>%  # drop the first row, as it contains again the variable names and last row that contains 2017 results
+  mutate(
+         # polls are shown to run from-to, e.g. 9-13 Aug 2021. We keep the last date, 13 Aug here, as the poll date
+         # and we extract it by picking the last 11 characters from that field
+         end_date = str_sub(fieldwork_date, -11),
+         
+         # end_date is still a string, so we convert it into a date object using lubridate::dmy()
+         end_date = dmy(end_date),
+         
+         # we also get the month and week number from the date, if we want to do analysis by month- week, etc.
+         month = month(end_date),
+         week = isoweek(end_date)
+         )
+```
+
+
+```{r, warning = FALSE}
+library(data.table)
+library(latex2exp)
+library(reshape2)
+colors = c("black", "brown4", "deepskyblue4", "goldenrod3", "blue4", "green4")
+
+
+#Clen NAs if there are any, delete irrelevant columns and create one technical vector:
+polls <- as.data.table(german_election_polls)
+polls <- polls[complete.cases(polls), ]
+polls[,1:4 := NULL] 
+polls[,11:12 := NULL]
+polls[,c("fw", "others", "lead") := NULL]
+
+labels_vector <- c(paste("Union", polls[end_date == max(end_date), union]), paste("SPD", polls[end_date == max(end_date), spd]), paste("AfD", polls[end_date == max(end_date), af_d]), paste("FDP", polls[end_date == max(end_date), fdp]), paste("Linke", polls[end_date == max(end_date), linke]), paste("Grüne", polls[end_date == max(end_date), grune]))
+
+#Reshape the data for multi-column plotting:
+polls <- melt(polls, id="end_date", value.name = "data")
+
+#Do the plotting. We start with printing out the distinct poll results, then adding the simple MA to the graphs:
+ggplot(polls, aes(x = end_date, y = data, colour = variable)) + 
+geom_point(alpha = 0.4, cex = 1.15) + 
+geom_ma(aes(x = end_date+10), ma_fun = SMA, n = 14, position = "identity", linetype = "solid", size = 0.65)+
+#Ensure the color scheme is aligned with the original plot:
+scale_color_manual(values = c(colors), labels = labels_vector) + 
+#Add the horizontal line grid:
+geom_hline(yintercept = seq(5,45,10), linetype = "dotted", size = 0.5, color = alpha("grey", 0.5))+
+#Delete the default grid:
+theme_bw()+
+#Add the custom grid, amend the style and contents of legend
+theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "white"),  legend.title = element_text(size = 7.5), legend.position = c(0.835,0.8), legend.background = element_rect(fill = "white" ,colour = "black ", size = 0.3))+
+geom_vline(xintercept = max(polls$end_date), linetype = "dotted", size = 0.5)+
+guides(col=guide_legend("24 Sep 2021\n 14-day rolling average %"))+
+#Finally, make the axis labels match the original plot
+scale_x_continuous(name = "Polls end date", breaks = as.Date(c("2021-01-01", "2021-03-01", "2021-05-01", "2021-07-01", "2021-09-01"), "%Y-%m-%d"), labels = c("Jan 2021", "Mar", "May", "Jul", "Sep")) +
+scale_y_continuous(name = "Percentage of votes cast", breaks = seq(5,45,10), labels = c(5,15,25,35,"45%"), limits = c(4,46))
+#here we are!
+
+```
